@@ -1,1 +1,1 @@
-This repository contains collection of my personal configurations.
+This repository contains the collection of my personal configurations.
