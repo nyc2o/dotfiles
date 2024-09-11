@@ -347,7 +347,6 @@
 ;;; Add Support for Pretty Symbols Mode
 (setq prettify-symbols-alist '(("lambda" . 955)))
 
-
 ;;; Dashboard
 (use-package dashboard
   :ensure t
