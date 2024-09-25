@@ -1,29 +1,28 @@
-(load (expand-file-name
-       "~/quicklisp/slime-helper.el"))
+(load (expand-file-name "~/quicklisp/slime-helper.el"))
   ;; Replace "sbcl" with the path to your implementation
   (setq inferior-lisp-program "sbcl")
-
-(use-package all-the-icons
-  :if (display-graphic-p))
-
-;;; ---------------------------------------------------
-
+
 ;;; Global prettify
 (global-prettify-symbols-mode 1)
 
 ;;; VTERM
 (use-package vterm
-  :load-path  "/home/michael-adrian-villareal/common-lisp/emacs-libvterm/")
+  :load-path  "/home/nycto/common-lisp/emacs-libvterm/")
 
+;;; All-the-icons
+(add-to-list 'load-path "/home/nycto/common-lisp/all-the-icons.el")
+ (when (display-graphic-p)
+  (require 'all-the-icons))
 
 ;;; NEOTREE
+(add-to-list 'load-path "/home/nycto/common-lisp/neotree")
 (require 'neotree)
-(global-set-key [f8] 'neotree-toggle)
-(setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+  (global-set-key [f8] 'neotree-toggle)
+  (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
 
 
 ;;; Page-break-lines
-(load "/home/michael-adrian-villareal/quicklisp/page-break-lines/page-break-lines.el")
+(load "/home/nycto/common-lisp/page-break-lines/page-break-lines.el")
 (require 'page-break-lines)
 
 
@@ -62,16 +61,15 @@
 
 ;;; Basic UI Configuration
 ;; You will most likely need to adjust this font size for your system!
-(defvar runemacs/default-font-size 180)
+(defvar runemacs/default-font-size 150)
 
 (setq inhibit-startup-message t)
 
-;(scroll-bar-mode -1)        ; Disable visible scrollbar
+(scroll-bar-mode -1)        ; Disable visible scrollbar
 ;(tool-bar-mode -1)          ; Disable the toolbar
-;(tooltip-mode -1)           ; Disable tooltips
+(tooltip-mode -1)           ; Disable tooltips
 (set-fringe-mode 10)        ; Give some breathing room
-
-;(menu-bar-mode -1)            ; Disable the menu bar
+(menu-bar-mode -1)            ; Disable the menu bar
 
 ;; Set up the visible bell
 (setq visible-bell t)
@@ -91,9 +89,9 @@
 ;;(set-face-attribute 'fixed-pitch nil :font "Fira Code Retina" :height 260)
 
 ;; Set the variable pitch face
-(set-fontset-font "fontset-default"
-                  (cons page-break-lines-char page-break-lines-char)
-                  (face-attribute 'default :family))
+;;; (set-fontset-font "fontset-default"
+;;                  (cons page-break-lines-char page-break-lines-char)
+;;                  (face-attribute 'default :family))
 
 
 ;;; Package Manager Configuration 
@@ -164,7 +162,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(org-agenda-files
-   '("/home/michael-adrian-villareal/src/org-agen-cap/agenda.org"))
+   '("/home/nycto/src/org-agen-cap/agenda.org"))
  '(org-directory "~/src/org-agen-cap")
  '(package-selected-packages
    '(neotree sly smartparens visual-fill-column org-bullets forge evil-magit magit counsel-projectile projectile hydra evil-collection evil general helpful counsel ivy-rich which-key rainbow-delimiters org-modern))
@@ -276,7 +274,7 @@
                   (org-level-6 . 1.1)
                   (org-level-7 . 1.1)
                   (org-level-8 . 1.1)))
-    (set-face-attribute (car face) nil :font "Cantarell" :weight 'regular :height (cdr face)))
+    (set-face-attribute (car face) nil :font "Mate" :weight 'regular :height (cdr face)))
 
   ;; Ensure that anything that should be fixed-pitch in Org files appears that way
   (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
@@ -297,7 +295,7 @@
   :after org
   :hook (org-mode . org-bullets-mode)
   :custom
-  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+  (org-bullets-bullet-list '("◉" "☯" "●" "☯" "●" "☯" "●")))
 
 (defun efs/org-mode-visual-fill ()
   (setq visual-fill-column-width 100
@@ -316,6 +314,38 @@
       '(("s" "Snippet" entry
          (file+headline "n.org" "Captured Items")
 	 "* Note No. %^{}  \n")))
+
+;;; (add-hook 'org-mode-hook #'org-modern-mode
+(add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
+    
+(setq
+ ;; Edit settings
+ org-auto-align-tags nil
+ org-tags-column 0
+ org-catch-invisible-edits 'show-and-error
+ org-special-ctrl-a/e t
+ org-insert-heading-respect-content t
+
+ ;; Org styling, hide markup etc.
+ org-hide-emphasis-markers t
+ org-pretty-entities t
+
+ ;; Agenda styling
+ org-agenda-tags-column 0
+ org-agenda-block-separator ?─
+ org-agenda-time-grid
+ '((daily today require-timed)
+   (800 1000 1200 1400 1600 1800 2000)
+   " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄")
+ org-agenda-current-time-string
+ "◀── NOW! ─────────────────────────────────────────────────")
+
+;; Ellipsis styling
+(setq org-ellipsis "…")
+(add-hook 'org-mode-hook
+          (lambda ()
+            (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil)))
+(global-org-modern-mode)
 
 
 ;;; Timestamps
@@ -340,23 +370,40 @@
 
 
 ;;; KEY-BIND FOR SMARTPARENS
-
 (add-hook 'after-init-hook 'global-company-mode)
-
 
 ;;; Add Support for Pretty Symbols Mode
 (setq prettify-symbols-alist '(("lambda" . 955)))
 
 ;;; Dashboard
+(defun gen-random-dashboard-banner-title ()
+  "Generate Random Dashboard every open of Emacs."
+  (let* ((banners '("~/.emacs.d/img/as.gif"
+		    "~/.emacs.d/img/as1.gif"
+		    "~/.emacs.d/img/as2.gif"
+		    "~/.emacs.d/img/as3.gif"
+		    "~/.emacs.d/img/as4.gif"
+		    "~/.emacs.d/img/as5.gif"
+		    "~/.emacs.d/img/as6.gif"
+		    "~/.emacs.d/img/as7.gif"))
+	(title-logo '("Live as if you were to die tomorrow!"
+		      "To accomplish great things, we must not only act, but also dream; not only plan, but also believe."
+		      "Only passions, great passions can elevate the soul to great things."
+		      "I did a lot of great things in the past, but I live for today and for the future."
+		      "Believe you can and you’re halfway there."
+		      "Be happy for this moment. This moment is your life."
+		      "Change your thoughts and you change your world."
+		      "Life is only meaningful when we are striving for a goal."))
+	(random-banner (nth (random (length banners)) banners))
+	(random-logo (nth (random (length title-logo)) title-logo)))
+    (setq dashboard-startup-banner random-banner
+	  dashboard-banner-logo-title random-logo)))
+
 (use-package dashboard
   :ensure t
   :config
-    (dashboard-setup-startup-hook)
-    (setq dashboard-startup-banner "~/.emacs.d/img/ordinary.png")
-    (setq dashboard-items '((recents  . 5)
-                            (projects . 5)))
-    (setq dashboard-banner-logo-title "Hi Nycto! Grind me well!"))
-    
-    
-
+  (gen-random-dashboard-banner-title)
+  (dashboard-setup-startup-hook)
+  (setq dashboard-items '((recents . 5)
+                          (projects . 5))))
 
