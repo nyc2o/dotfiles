@@ -376,7 +376,7 @@
 (setq prettify-symbols-alist '(("lambda" . 955)))
 
 ;;; Dashboard
-(defun gen-random-dashboard-banner-title ()
+(defun generate-random-banner-title ()
   "Generate Random Dashboard every open of Emacs."
   (let* ((banners '("~/.emacs.d/img/as.gif"
 		    "~/.emacs.d/img/as1.gif"
@@ -386,7 +386,7 @@
 		    "~/.emacs.d/img/as5.gif"
 		    "~/.emacs.d/img/as6.gif"
 		    "~/.emacs.d/img/as7.gif"))
-	(title-logo '("Live as if you were to die tomorrow!"
+	(titles '("Live as if you were to die tomorrow!"
 		      "To accomplish great things, we must not only act, but also dream; not only plan, but also believe."
 		      "Only passions, great passions can elevate the soul to great things."
 		      "I did a lot of great things in the past, but I live for today and for the future."
@@ -395,14 +395,14 @@
 		      "Change your thoughts and you change your world."
 		      "Life is only meaningful when we are striving for a goal."))
 	(random-banner (nth (random (length banners)) banners))
-	(random-logo (nth (random (length title-logo)) title-logo)))
+	(random-titles (nth (random (length titles)) titles)))
     (setq dashboard-startup-banner random-banner
-	  dashboard-banner-logo-title random-logo)))
+	  dashboard-banner-logo-title random-titles)))
 
-(use-package dashboard
+  (use-package dashboard
   :ensure t
   :config
-  (gen-random-dashboard-banner-title)
+  (generate-random-banner-title)
   (dashboard-setup-startup-hook)
   (setq dashboard-items '((recents . 5)
                           (projects . 5))))
