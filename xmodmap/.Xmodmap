@@ -1,0 +1,12 @@
+!! right ctrl
+keycode 105 = Mode_switch
+
+!! right menu
+keycode 133 = Mode_switch
+
+!! symbols
+keycode 20 = minus underscore endash emdash
+keycode 34 = bracketleft braceleft leftdoublequotemark
+keycode 35 = bracketright braceright rightdoublequotemark
+keycode 49 = grave asciitilde leftsinglequotemark
+keycode 48 = apostrophe quotedbl rightsinglequotemark
