@@ -2,6 +2,93 @@
   ;; Replace "sbcl" with the path to your implementation
   (setq inferior-lisp-program "sbcl")
 
+
+;;; Custom commands
+(defun pt/split-window-thirds ()
+  "Split a window into thirds."
+  (interactive)
+  (split-window-right)
+  (split-window-right)
+  (balance-windows))
+(bind-key "C-c 3" #'pt/split-window-thirds)
+
+(defun open-init-file ()
+  "Open emacs config."
+  (interactive)
+  (find-file "~/.emacs"))
+
+(bind-key "C-c e" #'open-init-file)
+
+
+;;; Doom Mode line
+(use-package doom-modeline
+  :ensure t
+  :init (doom-modeline-mode 1))
+
+(setq doom-modeline-support-imenu t)
+;; How tall the mode-line should be. It's only respected in GUI.
+;; If the actual char height is larger, it respects the actual height.
+(setq doom-modeline-height 25)
+;; How wide the mode-line bar should be. It's only respected in GUI.
+(setq doom-modeline-bar-width 4)
+;; Whether to use hud instead of default bar. It's only respected in GUI.
+(setq doom-modeline-hud nil)
+;; The limit of the window width.
+;; If `window-width' is smaller than the limit, some information won't be
+;; displayed. It can be an integer or a float number. `nil' means no limit."
+(setq doom-modeline-window-width-limit 85)
+(setq doom-modeline-project-detection 'auto)
+(setq doom-modeline-buffer-file-name-style 'auto)
+(setq doom-modeline-icon t)
+(setq doom-modeline-major-mode-icon t)
+(setq doom-modeline-major-mode-color-icon t)
+(setq doom-modeline-buffer-state-icon t)
+(setq doom-modeline-buffer-modification-icon t)
+(setq doom-modeline-lsp-icon t)
+(setq doom-modeline-time-icon t)
+(setq doom-modeline-time-live-icon t)
+(setq doom-modeline-time-analogue-clock t)
+(setq doom-modeline-time-clock-size 0.7)
+(setq doom-modeline-unicode-fallback nil)
+(setq doom-modeline-buffer-name t)
+(setq doom-modeline-highlight-modified-buffer-name t)
+(setq doom-modeline-column-zero-based t)
+(setq doom-modeline-percent-position '(-3 "%p"))
+(setq doom-modeline-position-line-format '("L%l"))
+(setq doom-modeline-position-column-format '("C%c"))
+(setq doom-modeline-position-column-line-format '("%l:%c"))
+(setq doom-modeline-minor-modes nil)
+(setq doom-modeline-enable-word-count nil)
+(setq doom-modeline-continuous-word-count-modes '(markdown-mode gfm-mode org-mode))
+(setq doom-modeline-buffer-encoding t)
+(setq doom-modeline-indent-info nil)
+(setq doom-modeline-total-line-number nil)
+(setq doom-modeline-vcs-icon t)
+(setq doom-modeline-vcs-max-length 15)
+(setq doom-modeline-vcs-display-function #'doom-modeline-vcs-name)
+(setq doom-modeline-check-icon t)
+(setq doom-modeline-check-simple-format nil)
+(setq doom-modeline-number-limit 99)
+(setq doom-modeline-workspace-name t)
+(setq doom-modeline-persp-name t)
+(setq doom-modeline-display-default-persp-name nil)
+(setq doom-modeline-persp-icon t)
+(setq doom-modeline-lsp t)
+(setq doom-modeline-github nil)
+(setq doom-modeline-github-interval (* 30 60))
+(setq doom-modeline-modal t)
+(setq doom-modeline-modal-icon t)
+(setq doom-modeline-modal-modern-icon t)
+(setq doom-modeline-irc t)
+(setq doom-modeline-irc-stylize 'identity)
+(setq doom-modeline-battery t)
+(setq doom-modeline-time t)
+(setq doom-modeline-buffer-file-name-function #'identity)
+(setq doom-modeline-buffer-file-truename-function #'identity)
+(setq doom-modeline-env-version t)
+(setq doom-modeline-env-load-string "...")
+
+
 ;;; Global prettify
 (global-prettify-symbols-mode 1)
 
@@ -67,8 +154,8 @@
 
 (scroll-bar-mode -1)        ; Disable visible scrollbar
 ;(tool-bar-mode -1)          ; Disable the toolbar
-(tooltip-mode -1)           ; Disable tooltips
-(set-fringe-mode 10)        ; Give some breathing room
+;; (tooltip-mode -1)           ; Disable tooltips
+;; (set-fringe-mode 10)        ; Give some breathing room
 (menu-bar-mode -1)            ; Disable the menu bar
 
 ;; Set up the visible bell
@@ -118,15 +205,15 @@
 
 (use-package command-log-mode)
 
+;; (use-package doom-modeline
+;;   :init (doom-modeline-mode 1)
+;;   :custom ((doom-modeline-height 15)))
 
 ;;; Rainbow-parens-delimiters
-(use-package doom-modeline
-  :init (doom-modeline-mode 1)
-  :custom ((doom-modeline-height 15)))
 
 ;;Doom theme
 (use-package doom-themes
-  :init (load-theme 'doom-snazzy t))
+  :init (load-theme 'doom-gruvbox t))
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
@@ -161,11 +248,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-agenda-files
-   '("/home/nycto/src/org-agen-cap/agenda.org"))
+ '(org-agenda-files '("/home/nycto/src/org-agen-cap/agenda.org"))
  '(org-directory "~/src/org-agen-cap")
  '(package-selected-packages
-   '(neotree sly smartparens visual-fill-column org-bullets forge evil-magit magit counsel-projectile projectile hydra evil-collection evil general helpful counsel ivy-rich which-key rainbow-delimiters org-modern))
+   '(doom-modeline-now-playing neotree sly smartparens visual-fill-column org-bullets forge evil-magit magit counsel-projectile projectile hydra evil-collection evil general helpful counsel ivy-rich which-key rainbow-delimiters org-modern))
  '(warning-suppress-log-types '(((slime warning))))
  '(warning-suppress-types '(((slime warning)) (comp))))
 (custom-set-faces
