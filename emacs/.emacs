@@ -24,25 +24,27 @@
 
 ;;Doom theme
 (use-package doom-themes
-  :init (load-theme 'doom-gruvbox t))
+  :init (load-theme 'doom-manegarm t))
 
 ;;; Doom Mode line
 (use-package doom-modeline
   :ensure t
   :init (doom-modeline-mode 1))
+
 (set-face-attribute 'mode-line nil
-                    :background "#353644"
+                    :background "#1D1F27"  ; Dark blue background
+                    :foreground "white"
+                    :box '(:line-width 8 :color "#1D1F27")
+                    :overline nil
+                    :underline nil)
+
+(set-face-attribute 'mode-line-inactive nil
+                    :background "#353644"  ; You can keep this or change it too
                     :foreground "white"
                     :box '(:line-width 8 :color "#353644")
                     :overline nil
                     :underline nil)
 
-(set-face-attribute 'mode-line-inactive nil
-                    :background "#565063"
-                    :foreground "white"
-                    :box '(:line-width 8 :color "#565063")
-                    :overline nil
-                    :underline nil)
 (display-battery-mode 1)
 (setq doom-modeline-support-imenu t)
 (setq doom-modeline-height 25)
@@ -168,10 +170,15 @@
 (setq inhibit-startup-message t)
 
 (scroll-bar-mode -1)        ; Disable visible scrollbar
-;;(tool-bar-mode -1)          ; Disable the toolbar
-;;(tooltip-mode -1)           ; Disable tooltips
-;;(set-fringe-mode 10)        ; Give some breathing room
+;; (tool-bar-mode -1)          ; Disable the toolbar
+;; (tooltip-mode -1)           ; Disable tooltips
+;; (set-fringe-mode 10)        ; Give some breathing room
 (menu-bar-mode -1)            ; Disable the menu bar
+(set-face-attribute 'tool-bar nil
+                    :background  nil 
+                    :foreground "white"
+                    :underline)
+
 
 ;; Set up the visible bell
 (setq visible-bell t)
@@ -237,22 +244,14 @@
 (add-hook 'markdown-mode-hook 'turn-on-smartparens-strict-mode)
 
 (custom-set-variables
-;;  ;; custom-set-variables was added by Custom.
-;;  ;; If you edit it by hand, you could mess it up, so be careful.
-;;  ;; Your init file should contain only one such instance.
-;;  ;; If there is more than one, they won't work right.
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(org-agenda-files '("/home/nycto/src/org-agen-cap/agenda.org"))
  '(org-directory "~/src/org-agen-cap")
-;;  '(package-selected-packages
-;;    '(doom-modeline-now-playing neotree sly smartparens visual-fill-column org-bullets forge evil-magit magit counsel-projectile projectile hydra evil-collection evil general helpful counsel ivy-rich which-key rainbow-delimiters org-modern))
-;;  '(warning-suppress-log-types '(((slime warning))))
-;;  '(warning-suppress-types '(((slime warning)) (comp))))
-;; (custom-set-faces
-;;  ;; custom-set-faces was added by Custom.
-;;  ;; If you edit it by hand, you could mess it up, so be careful.
-;;  ;; Your init file should contain only one such instance.
-;;  ;; If there is more than one, they won't work right.
- )
+ '(package-selected-packages
+   '(visual-fill-column spinner smartparens sesman rainbow-delimiters queue parseedn ox-pandoc org-modern org-bullets hydra helpful general forge doom-themes doom-modeline-now-playing dashboard counsel-projectile company command-log-mode calfw)))
 
 
 (use-package counsel
