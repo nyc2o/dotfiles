@@ -113,3 +113,23 @@
  =M - F10=
 
   - Toggle the maximization state of the current frame.
+
+* Custom commands
+  + Split a window into thirds
+   =C-c 3=
+  + Open emacs config
+   =C-c e= 
+
+* Slime commands
+
+**  Documentation lookup:
+
+  =C-c C-d d=
+  + shows the symbols’ documentation on a new window (same result as using describe). 
+    Other bindings which may be useful:
+
+  =C-c C-d f=
+  + describes a function
+
+  =C-c C-d h=
+  + looks up the symbol documentation in CLHS by opening the web browser. But it works only on symbols, so there are two more bindings:
