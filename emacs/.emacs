@@ -3,6 +3,9 @@
   (setq inferior-lisp-program "sbcl")
 
 
+;;; Global-company
+(add-hook 'after-init-hook 'global-company-mode)
+
 ;;; Custom commands
 (defun pt/split-window-thirds ()
   "Split a window into thirds."
