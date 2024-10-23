@@ -100,26 +100,28 @@
  =C-x b=
   - switch to buffer
     
- =Alt-x=
+ =M-x=
   - Execute extended command
 
 * Clear Screen SBCL Emacs
 
-=C - c M - o=
+=C-c M-o=
   - Clear the buffer in the SLIME REPL.
 
 * Maximize app
 
- =M - F10=
+ =M-x - F10=
 
   - Toggle the maximization state of the current frame.
 
-* Custom commands
-  + Split a window into thirds
-   + =C-c 3=
-  + Open emacs config
-   + =C-c e= 
+* Projectile
++ =C-c p p=
+  + Map every =~/src= file on my machine.
 
+* Neotree
++ F8
+  + Show the tree directory
+    
 * Slime commands
 
 **  Documentation lookup:
@@ -152,3 +154,15 @@
   
   =C-c C-w a=
   + (slime-who-specializes) methods specialized on a symbol
+
+* Custom commands
+  + Split a window into thirds
+   + =C-c 3=
+  + Open emacs config
+   + =C-c e= 
+
+* Org-mode commands
++ Org agenda
+  + =C-c a=
++ Org capture
+  + =C-c c=

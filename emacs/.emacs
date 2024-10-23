@@ -7,13 +7,13 @@
 (add-hook 'after-init-hook 'global-company-mode)
 
 ;;; Custom commands
-(defun pt/split-window-thirds ()
+(defun split-three-windows ()
   "Split a window into thirds."
   (interactive)
   (split-window-right)
   (split-window-right)
   (balance-windows))
-(bind-key "C-c 3" #'pt/split-window-thirds)
+(bind-key "C-c 3" #'split-three-windows)
 
 (defun open-init-file ()
   "Open emacs config."
@@ -22,6 +22,10 @@
 
 (bind-key "C-c e" #'open-init-file)
 
+
+;;Doom theme
+(use-package doom-themes
+  :init (load-theme 'doom-gruvbox t))
 
 ;;; Doom Mode line
 (use-package doom-modeline
@@ -102,7 +106,7 @@
 ;;; All-the-icons
 (add-to-list 'load-path "/home/nycto/common-lisp/all-the-icons.el")
  (when (display-graphic-p)
-  (require 'all-the-icons))
+   (require 'all-the-icons))
 
 ;;; NEOTREE
 (add-to-list 'load-path "/home/nycto/common-lisp/neotree")
@@ -143,7 +147,7 @@
 
 ;; Add Date
 (setq display-time-day-and-date t
-      display-time-format "%a %b %d %R"
+      display-time-format "%a | %b, %d | %R"
       display-time-interval 60
       display-time-default-load-average nil)
 (display-time)
@@ -156,9 +160,9 @@
 (setq inhibit-startup-message t)
 
 (scroll-bar-mode -1)        ; Disable visible scrollbar
-;(tool-bar-mode -1)          ; Disable the toolbar
-;; (tooltip-mode -1)           ; Disable tooltips
-;; (set-fringe-mode 10)        ; Give some breathing room
+;;(tool-bar-mode -1)          ; Disable the toolbar
+;;(tooltip-mode -1)           ; Disable tooltips
+;;(set-fringe-mode 10)        ; Give some breathing room
 (menu-bar-mode -1)            ; Disable the menu bar
 
 ;; Set up the visible bell
@@ -170,18 +174,6 @@
                 shell-mode-hook
                 eshell-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
-
-
-;;; Font Configuration 
-;;(set-face-attribute 'default nil :font "Fira Code Retina" :height runemacs/default-font-size)
-
-;; Set the fixed pitch face
-;;(set-face-attribute 'fixed-pitch nil :font "Fira Code Retina" :height 260)
-
-;; Set the variable pitch face
-;;; (set-fontset-font "fontset-default"
-;;                  (cons page-break-lines-char page-break-lines-char)
-;;                  (face-attribute 'default :family))
 
 
 ;;; Package Manager Configuration 
@@ -208,19 +200,9 @@
 
 (use-package command-log-mode)
 
-;; (use-package doom-modeline
-;;   :init (doom-modeline-mode 1)
-;;   :custom ((doom-modeline-height 15)))
-
 ;;; Rainbow-parens-delimiters
-
-;;Doom theme
-(use-package doom-themes
-  :init (load-theme 'doom-gruvbox t))
-
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
-
 (require 'rainbow-delimiters)
 
 (set-face-foreground 'rainbow-delimiters-depth-1-face "#c66")  ; red
@@ -246,23 +228,23 @@
 (add-hook 'prog-mode-hook 'turn-on-smartparens-strict-mode)
 (add-hook 'markdown-mode-hook 'turn-on-smartparens-strict-mode)
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(org-agenda-files '("/home/nycto/src/org-agen-cap/agenda.org"))
- '(org-directory "~/src/org-agen-cap")
- '(package-selected-packages
-   '(doom-modeline-now-playing neotree sly smartparens visual-fill-column org-bullets forge evil-magit magit counsel-projectile projectile hydra evil-collection evil general helpful counsel ivy-rich which-key rainbow-delimiters org-modern))
- '(warning-suppress-log-types '(((slime warning))))
- '(warning-suppress-types '(((slime warning)) (comp))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+;; (custom-set-variables
+;;  ;; custom-set-variables was added by Custom.
+;;  ;; If you edit it by hand, you could mess it up, so be careful.
+;;  ;; Your init file should contain only one such instance.
+;;  ;; If there is more than one, they won't work right.
+;;  '(org-agenda-files '("/home/nycto/src/org-agen-cap/agenda.org"))
+;;  '(org-directory "~/src/org-agen-cap")
+;;  '(package-selected-packages
+;;    '(doom-modeline-now-playing neotree sly smartparens visual-fill-column org-bullets forge evil-magit magit counsel-projectile projectile hydra evil-collection evil general helpful counsel ivy-rich which-key rainbow-delimiters org-modern))
+;;  '(warning-suppress-log-types '(((slime warning))))
+;;  '(warning-suppress-types '(((slime warning)) (comp))))
+;; (custom-set-faces
+;;  ;; custom-set-faces was added by Custom.
+;;  ;; If you edit it by hand, you could mess it up, so be careful.
+;;  ;; Your init file should contain only one such instance.
+;;  ;; If there is more than one, they won't work right.
+;;  )
 
 
 (use-package counsel
@@ -283,10 +265,10 @@
   ([remap describe-key] . helpful-key))
   
   
-;;; Key Binding Configuration 
+;;; Key Binding Configuration—ESC and load-theme, Adjust text-sizes.
+
 ;;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-
 
 (use-package general
  :config
@@ -294,7 +276,7 @@
     :keymaps '(normal insert visual emacs)
     :prefix "SPC"
     :global-prefix "C-SPC")
-
+  
   (rune/leader-keys
    "t"  '(:ignore t :which-key "toggles")
     "tt" '(counsel-load-theme :which-key "choose theme")))
@@ -320,27 +302,15 @@
   ("C-c p" . projectile-command-map)
   :init
   ;; NOTE: Set this to the folder where you keep your Git repos!
-  (when (file-directory-p "~/Projects/Code")
-    (setq projectile-project-search-path '("~/Projects/Code")))
+  (when (file-directory-p "~/src")
+    (setq projectile-project-search-path '("~/src")))
   (setq projectile-switch-project-action #'projectile-dired))
 
 (use-package counsel-projectile
   :config (counsel-projectile-mode))
   
-  
-;;; Magit Configuration 
-(use-package magit
-  :custom
-  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
-
-;;(use-package evil-magit
- ;; :after magit)
-
-;; NOTE: Make sure to configure a GitHub token before using this package!
-;; - https://magit.vc/manual/forge/Token-Creation.html#Token-Creation
-;; - https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started
-(use-package forge)
-
+  
+;;; Set-up org mode.
 (defun efs/org-mode-setup ()
   (org-indent-mode)
   (variable-pitch-mode 1)
@@ -457,9 +427,6 @@
   (linum-mode t))
 (add-hook 'find-file-hook 'my-linum-mode-hook)
 
-
-;;; KEY-BIND FOR SMARTPARENS
-(add-hook 'after-init-hook 'global-company-mode)
 
 ;;; Add Support for Pretty Symbols Mode
 (setq prettify-symbols-alist '(("lambda" . 955)))
