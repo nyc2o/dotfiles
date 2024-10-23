@@ -116,9 +116,9 @@
 
 * Custom commands
   + Split a window into thirds
-   =C-c 3=
+   + =C-c 3=
   + Open emacs config
-   =C-c e= 
+   + =C-c e= 
 
 * Slime commands
 
@@ -139,16 +139,16 @@
   + (slime-who-calls) callers of a function
 
   =C-c C-w m=
-  (slime-who-macroexpands) places where a macro is expanded
+  + (slime-who-macroexpands) places where a macro is expanded
 
   =C-c C-w r=
-  (slime-who-references) global variable references
+  + (slime-who-references) global variable references
 
   =C-c C-w b=
-  (slime-who-bind) global variable bindings
+  + (slime-who-bind) global variable bindings
 
   =C-c C-w s=
-  (slime-who-sets) global variable setters
+  + (slime-who-sets) global variable setters
   
   =C-c C-w a=
-  (slime-who-specializes) methods specialized on a symbol
+  + (slime-who-specializes) methods specialized on a symbol
