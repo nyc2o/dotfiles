@@ -25,7 +25,7 @@
     
 *  Emacs Screen Window
 
-=C-o=
+=C-x o=
   -  view other window
    
 =C-x 3=
