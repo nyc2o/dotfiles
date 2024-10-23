@@ -2,9 +2,9 @@
   ;; Replace "sbcl" with the path to your implementation
   (setq inferior-lisp-program "sbcl")
 
-
 ;;; Global-company
 (add-hook 'after-init-hook 'global-company-mode)
+
 
 ;;; Custom commands
 (defun split-three-windows ()
@@ -22,7 +22,6 @@
 
 (bind-key "C-c e" #'open-init-file)
 
-
 ;;Doom theme
 (use-package doom-themes
   :init (load-theme 'doom-gruvbox t))
@@ -31,14 +30,23 @@
 (use-package doom-modeline
   :ensure t
   :init (doom-modeline-mode 1))
+(set-face-attribute 'mode-line nil
+                    :background "#353644"
+                    :foreground "white"
+                    :box '(:line-width 8 :color "#353644")
+                    :overline nil
+                    :underline nil)
 
+(set-face-attribute 'mode-line-inactive nil
+                    :background "#565063"
+                    :foreground "white"
+                    :box '(:line-width 8 :color "#565063")
+                    :overline nil
+                    :underline nil)
+(display-battery-mode 1)
 (setq doom-modeline-support-imenu t)
-;; How tall the mode-line should be. It's only respected in GUI.
-;; If the actual char height is larger, it respects the actual height.
 (setq doom-modeline-height 25)
-;; How wide the mode-line bar should be. It's only respected in GUI.
 (setq doom-modeline-bar-width 4)
-;; Whether to use hud instead of default bar. It's only respected in GUI.
 (setq doom-modeline-hud nil)
 ;; The limit of the window width.
 ;; If `window-width' is smaller than the limit, some information won't be
@@ -228,13 +236,13 @@
 (add-hook 'prog-mode-hook 'turn-on-smartparens-strict-mode)
 (add-hook 'markdown-mode-hook 'turn-on-smartparens-strict-mode)
 
-;; (custom-set-variables
+(custom-set-variables
 ;;  ;; custom-set-variables was added by Custom.
 ;;  ;; If you edit it by hand, you could mess it up, so be careful.
 ;;  ;; Your init file should contain only one such instance.
 ;;  ;; If there is more than one, they won't work right.
-;;  '(org-agenda-files '("/home/nycto/src/org-agen-cap/agenda.org"))
-;;  '(org-directory "~/src/org-agen-cap")
+ '(org-agenda-files '("/home/nycto/src/org-agen-cap/agenda.org"))
+ '(org-directory "~/src/org-agen-cap")
 ;;  '(package-selected-packages
 ;;    '(doom-modeline-now-playing neotree sly smartparens visual-fill-column org-bullets forge evil-magit magit counsel-projectile projectile hydra evil-collection evil general helpful counsel ivy-rich which-key rainbow-delimiters org-modern))
 ;;  '(warning-suppress-log-types '(((slime warning))))
@@ -244,7 +252,7 @@
 ;;  ;; If you edit it by hand, you could mess it up, so be careful.
 ;;  ;; Your init file should contain only one such instance.
 ;;  ;; If there is more than one, they won't work right.
-;;  )
+ )
 
 
 (use-package counsel
@@ -455,11 +463,26 @@
     (setq dashboard-startup-banner random-banner
 	  dashboard-banner-logo-title random-titles)))
 
-  (use-package dashboard
+(setq dashboard-filter-agenda-entry 'dashboard-no-filter-agenda)
+
+(use-package dashboard
   :ensure t
+  :init
+  (setq dashboard-item-names '(("Recent Files:"               . "Recently opened files:")
+			       ("Bookmarks:"                  . "Bookmark links:")
+                               ("Agenda for the coming week:" . "Agenda:")))
+  (setq initial-buffer-choice 'dashboard-open)
+  (setq dashboard-icon-type 'all-the-icons) ;; use `all-the-icons' package
+  (setq dashboard-display-icons-p t) ;; display icons on both GUI and terminal
+  (setq dashboard-icon-type 'nerd-icons) ;; use `nerd-icons' package
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-file-icons t)
+  (setq dashboard-set-init-info t)
+  (setq dashboard-center-content t) ;; set to 't' for centered content
   :config
+  (setq dashboard-heading-shorcut-format " [%s]")
   (generate-random-banner-title)
   (dashboard-setup-startup-hook)
   (setq dashboard-items '((recents . 5)
-                          (projects . 5))))
-
+			  (bookmarks . 5))))
+(add-to-list 'dashboard-items '(agenda) t)
