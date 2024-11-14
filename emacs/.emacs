@@ -1,10 +1,18 @@
+
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
   ;; Replace "sbcl" with the path to your implementation
   (setq inferior-lisp-program "sbcl")
+
 
+;;; Reveal.js
+(require 'ox-reveal)
+(setq org-reveal-root "file:/home/nycto/src/video-series-scripts/intro/reveal.js")
+
 ;;; Global-company
 (add-hook 'after-init-hook 'global-company-mode)
 
+;;; ox-spectacle
+(require 'ox-spectacle)
 
 ;;; Custom commands
 (defun split-three-windows ()
@@ -169,10 +177,11 @@
 
 (setq inhibit-startup-message t)
 
-(scroll-bar-mode -1)        ; Disable visible scrollbar
-;; (tool-bar-mode -1)          ; Disable the toolbar
-;; (tooltip-mode -1)           ; Disable tooltips
-;; (set-fringe-mode 10)        ; Give some breathing room
+(scroll-bar-mode -1)
+;; Disable visible scrollbar
+(tool-bar-mode -1)  	    ; Disable the toolbar
+(tooltip-mode -1)           ; Disable tooltips
+(set-fringe-mode 10)        ; Give some breathing room
 (menu-bar-mode -1)            ; Disable the menu bar
 (set-face-attribute 'tool-bar nil
                     :background  nil 
@@ -251,7 +260,8 @@
  '(org-agenda-files '("/home/nycto/src/org-agen-cap/agenda.org"))
  '(org-directory "~/src/org-agen-cap")
  '(package-selected-packages
-   '(visual-fill-column spinner smartparens sesman rainbow-delimiters queue parseedn ox-pandoc org-modern org-bullets hydra helpful general forge doom-themes doom-modeline-now-playing dashboard counsel-projectile company command-log-mode calfw)))
+   '(ox-reveal org-re-reveal visual-fill-column spinner smartparens sesman rainbow-delimiters queue parseedn ox-pandoc org-modern org-bullets hydra helpful general forge doom-themes doom-modeline-now-playing dashboard counsel-projectile company command-log-mode calfw))
+ '(warning-suppress-log-types '((slime warning) (slime warning))))
 
 
 (use-package counsel
@@ -485,3 +495,9 @@
   (setq dashboard-items '((recents . 5)
 			  (bookmarks . 5))))
 (add-to-list 'dashboard-items '(agenda) t)
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
