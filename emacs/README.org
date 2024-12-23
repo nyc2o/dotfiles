@@ -13,12 +13,12 @@
 
 ** Key Features
 *** Development Tools
-+ **SLIME Integration**
++ SLIME Integration
   + Configured for SLIME and SBCL implementation
   + Enhanced with Rainbow Delimiters for parentheses
   + Includes Smartparens for automatic parentheses pairing
     
-+ **Code Enhancement**
++ Code Enhancement
   + Rainbow parentheses and delimiters
   + Includes Smartparens for automatic parentheses pairing
   + Lambda symbol prettification
@@ -30,13 +30,13 @@
 
 *** Interface Improvements
 
-+ **Navigation & Search**
++ Navigation & Search
   + =Counsel= for enhanced completion
   + =Projectile= for project management
   + =Neotree= for directory tree visualization
   + Custom three-window split command (=C-c 3=)
 
-+ **Visual Enhancements**
++ Visual Enhancements
   + Doom theme (=gruvbox= variant) or (=manegarm= variant)
   + Customized modeline with various indicators
   + Dashboard with random banners and quotes
@@ -44,12 +44,12 @@
 
 *** Org Mode Features
 
-+ **Basic Configuration**
++ Basic Configuration
   + Custom bullet points and formatting
   + Visual fill column mode
   + Modern styling and emphasis markers
 
-+ **Functionality**
++ Functionality
   + Org capture
   + Org agenda
   + Custom timestamp formatting
@@ -57,29 +57,29 @@
 
 *** Terminal
 
-+ **VTERM Integration**
++ VTERM Integration
   + Full terminal emulator functionality
 
 *** Keybindings
 
-  + `F8`: Toggle Neotree
-  + `C-c e`: Open init file
-  + `C-c c`: Org capture
-  + `C-c a`: Org agenda
-  + `ESC`: Quit prompts
-  + Various `Counsel` keybindings
+  + F8: Toggle Neotree
+  + C-c e: Open init file
+  + C-c c: Org capture
+  + C-c a: Org agenda
+  + ESC: Quit prompts
+  + Various Counsel keybindings
   + Emacs standard built-in commands
 
 *** Additional Features
 
-+ **History and State Management**
++ History and State Management
   + Minibuffer history saving
   + Desktop state preservation
   + Bookmark management
 
-+ **Visual Customization**
-  + Text scaling with `hydra`
-  + Theme selection via `counsel`
++ Visual Customization
+  + Text scaling with hydra
+  + Theme selection via counsel
   + Line number formatting
   + Custom modeline configuration
   + Proper indentation.
