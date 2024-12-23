@@ -1,14 +1,13 @@
 ;;; -*- mode: emacs-lisp; coding: utf-8; lexical-binding: t -*-
 
-;;; Org Mode Configuration 
+
+;;; Org Mode Configuration
 
-(defun efs/org-font-setup ()
-  ;; Replace list hyphen with dot
+(defun nyc-org-font-setup ()
+  "Set up font and appearance for Org mode."
   (font-lock-add-keywords 'org-mode
                           '(("^ *\\([-]\\) "
                              (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
-
-  ;; Set faces for heading levels
   (dolist (face '((org-level-1 . 1.2)
                   (org-level-2 . 1.1)
                   (org-level-3 . 1.05)
@@ -19,87 +18,77 @@
                   (org-level-8 . 1.1)))
     (set-face-attribute (car face) nil :font "Mate" :weight 'regular :height (cdr face)))
 
-  ;; Ensure that anything that should be fixed-pitch in Org files appears that way
-  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
+  (dolist (face '(org-block org-code org-table org-verbatim org-special-keyword org-meta-line org-checkbox))
+    (set-face-attribute face nil :inherit '(shadow fixed-pitch)))
+  ;; Disable line numbers for Org mode
+  (add-hook 'org-mode-hook (lambda () (when line-number-mode (display-line-numbers-mode 0)))))
 
-(use-package org
-             :hook (org-mode . efs/org-mode-setup)
-             :config
-             (setq org-ellipsis " ▾")
-             (efs/org-font-setup))
+(defun nyc-org-mode-visual-fill ()
+  "Disable visual fill column and allow full width."
+  (visual-fill-column-mode -1) ;; Disable visual-fill-column for full width
+  (set-window-margins (selected-window) 0 0)) ;; Remove window margins
 
-(use-package org-bullets
-             :after org
-             :hook (org-mode . org-bullets-mode)
-             :custom
-             (org-bullets-bullet-list '("◉" "☯" "●" "☯" "●" "☯" "●")))
+(defun nyc-set-default-frame-size ()
+  "Set the default frame size for Emacs."
+  (add-to-list 'default-frame-alist '(width . 200)) 
+  (add-to-list 'default-frame-alist '(height . 50))) 
 
-(defun efs/org-mode-visual-fill ()
-  (setq visual-fill-column-width 100
-        visual-fill-column-center-text t)
-  (visual-fill-column-mode 1))
+(defun nyc-org-bullets-setup ()
+  "Set up org-bullets for Org mode."
+  (use-package org-bullets
+               :after org
+               :hook (org-mode . org-bullets-mode)
+               :custom
+               (org-bullets-bullet-list '("◉" "☯" "●" "☯" "●" "☯" "●"))))
 
-(use-package visual-fill-column
-             :hook (org-mode . efs/org-mode-visual-fill))
+(defun nyc-org-capture-templates-setup ()
+  "Set up Org capture templates."
+  (setq org-capture-templates
+        '(("s" "Snippet" entry
+           (file+headline "n.org" "Captured Items")
+           "* Note No. %^{}  \n"))))
 
-;;; Org Capture & Org Capture
+(defun nyc-org-mode-customizations ()
+  "Set up general Org mode customizations."
+  (setq org-ellipsis " ▾"
+        org-auto-align-tags nil
+        org-tags-column 0
+        org-catch-invisible-edits 'show-and-error
+        org-special-ctrl-a/e t
+        org-insert-heading-respect-content t
+        org-hide-emphasis-markers t
+        org-pretty-entities t
+        org-agenda-tags-column 0
+        org-agenda-block-separator ?─
+        org-agenda-time-grid
+        '((daily today require-timed)
+          (800 1000 1200 1400 1600 1800 2000)
+          " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄")
+        org-agenda-current-time-string "◀── NOW! ─────────────────────────────────────────────────"
+        org-ellipsis "…"))
 
-(global-set-key (kbd "C-c c") #'org-capture)
-(global-set-key (kbd "C-c a") #'org-agenda)
+(defun nyc-org-modern-setup ()
+  "Enable Org modern mode for a sleek look."
+  (add-hook 'org-mode-hook (lambda () (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil)))
+  (global-org-modern-mode))
 
-;;; Org Tempalte
+(defun nyc-org-keybindings-setup ()
+  "Set up keybindings for Org mode."
+  (global-set-key (kbd "C-c c") #'org-capture)
+  (global-set-key (kbd "C-c a") #'org-agenda))
 
-(setq x nil)
-(setq org-capture-templates
-      '(("s" "Snippet" entry
-         (file+headline "n.org" "Captured Items")
-	 "* Note No. %^{}  \n")))
+
+;;; Entry-point/Top-level
 
-;;; (add-hook 'org-mode-hook #'org-modern-mode
+(defun nyc/setup-org-mode ()
+  "Run all the setup functions for Org mode."
+  (nyc-org-font-setup)
+  (nyc-org-mode-customizations)
+  (nyc-org-bullets-setup)
+  (nyc-org-capture-templates-setup)
+  (nyc-org-keybindings-setup)
+  (nyc-org-modern-setup)
+  (nyc-set-default-frame-size)
+  (add-hook 'org-mode-hook #'nyc-org-mode-visual-fill))
 
-(add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
-
-(setq
- ;; Edit settings
- org-auto-align-tags nil
- org-tags-column 0
- org-catch-invisible-edits 'show-and-error
- org-special-ctrl-a/e t
- org-insert-heading-respect-content t
-
- ;; Org styling, hide markup etc.
- org-hide-emphasis-markers t
- org-pretty-entities t
-
- ;; Agenda styling
- org-agenda-tags-column 0
- org-agenda-block-separator ?─
- org-agenda-time-grid
- '((daily today require-timed)
-   (800 1000 1200 1400 1600 1800 2000)
-   " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄")
- org-agenda-current-time-string
- "◀── NOW! ─────────────────────────────────────────────────")
-
-;; Ellipsis styling
-
-(setq org-ellipsis "…")
-(add-hook 'org-mode-hook
-          (lambda ()
-            (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil)))
-(global-org-modern-mode)
-
-;; Ellipsis styling
-
-(setq org-ellipsis "…")
-(add-hook 'org-mode-hook
-          (lambda ()
-            (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil)))
-(global-org-modern-mode)
-
+(nyc/setup-org-mode)

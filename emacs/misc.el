@@ -1,23 +1,25 @@
 ;;; -*- mode: emacs-lisp; coding: utf-8; lexical-binding: t -*-
 
+
 ;;; Custom commands
 
-(defun split-three-windows ()
+(defun nyc-split-three-windows ()
   "Split a window into thirds."
   (interactive)
   (split-window-right)
   (split-window-right)
   (balance-windows))
 
-(defun open-init-file ()
+(defun nyc-open-init-file ()
   "Open emacs config."
   (interactive)
   (find-file "~/.emacs"))
 
+
 ;;; Dashboard
 
-(defun generate-random-banner-title ()
-  "Generate Random Dashboard every open of Emacs."
+(defun nyc-generate-random-banner-title ()
+  "Pre-process generation of random Dashboard every open of Emacs."
   (let* ((banners '("~/.emacs.d/img/as.gif"
 		    "~/.emacs.d/img/as1.gif"
 		    "~/.emacs.d/img/as2.gif"
@@ -40,7 +42,7 @@
 	  dashboard-banner-logo-title random-titles)))
 
 (setq dashboard-filter-agenda-entry 'dashboard-no-filter-agenda)
-
+"Processing dashboard generation."
 (use-package dashboard
              :ensure t
              :init
@@ -57,8 +59,16 @@
              (setq dashboard-center-content t) ;; set to 't' for centered content
              :config
              (setq dashboard-heading-shorcut-format " [%s]")
-             (generate-random-banner-title)
+             (nyc-generate-random-banner-title)
              (dashboard-setup-startup-hook)
              (setq dashboard-items '((recents . 5)
 			             (bookmarks . 5))))
 (add-to-list 'dashboard-items '(agenda) t)
+
+
+;;; Top-level / Entry-points
+
+(defun initialize ()
+  (nyc-split-three-windows)
+  (nyc-open-init-file)
+  (nyc-generate-random-banner-title))

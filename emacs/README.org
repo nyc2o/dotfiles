@@ -1,469 +1,94 @@
-#+title:   emacs configuration & commands
+#+title: Emacs Configuration Overview
 #+language: en
 #+startup: overview
 #+options: toc:nil html-postamble:nil
 
-* Initialization File—.emacs
-   + In Emacs, the configuration file .emacs (or init.el) is where I customize the behavior and appearance of my Emacs editor. This file is written in Emacs Lisp, which is the scripting language used by Emacs.
-     You have to take note that using this configuration is switching your theme to Doom. I am using Doom theme and doom modeline which in able render all the icons you should install =nerd-icons= in melpa package, You can install it with built-in =M-x package-install=
+** Core Setup and Package Management
++ Uses =.emacs= for customization
++ Utilizes =MELPA= package repository
 
-* Features:
-** Lisp Implementation:
- + Initializes SLIME and configures it to use SBCL.
-#+begin_src lisp
-  (load (expand-file-name "~/quicklisp/slime-helper.el"))
-  ;; Replace "sbcl" with the path to your implementation
-  (setq inferior-lisp-program "sbcl")
-#+end_src
+** UI Configuration
++ It has Doom theme and modeline
++ Requires =nerd-icons= package for proper icon rendering
 
-** Package Manager Configuration:
- + Initialize package sources.
-#+begin_src lisp
-
-(require 'package)
-
-(setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                         ("org" . "https://orgmode.org/elpa/")
-                         ("elpa" . "https://elpa.gnu.org/packages/")))
-
-(package-initialize)
-(unless package-archive-contents
- (package-refresh-contents))
-#+end_src
-
-** Rainbow parenthesis delimiters.
- + Enhances the readability of nested parentheses by coloring them in different hues.
-#+begin_src lisp
-  ;;; Rainbow-parens-delimiters
-(use-package rainbow-delimiters
-  :hook (prog-mode . rainbow-delimiters-mode))
-(require 'rainbow-delimiters)
-
-(set-face-foreground 'rainbow-delimiters-depth-1-face "#c66")  ; red
-(set-face-foreground 'rainbow-delimiters-depth-2-face "#6c6")  ; green
-(set-face-foreground 'rainbow-delimiters-depth-3-face "#69f")  ; blue
-(set-face-foreground 'rainbow-delimiters-depth-4-face "#cc6")  ; yellow
-(set-face-foreground 'rainbow-delimiters-depth-5-face "#6cc")  ; cyan
-(set-face-foreground 'rainbow-delimiters-depth-6-face "#c6c")  ; magenta
-(set-face-foreground 'rainbow-delimiters-depth-7-face "#ccc")  ; light gray
-(set-face-foreground 'rainbow-delimiters-depth-8-face "#999")  ; medium gray
-(set-face-foreground 'rainbow-delimiters-depth-9-face "#666")  ; dark gray
-
-;;Enable Rainbow Delimiters in SLIME REPL:
-(add-hook 'slime-repl-mode-hook 'rainbow-delimiters-mode)
-
-#+end_src
-** Smartparens
- + Automatic Pairing of Parentheses.
- #+begin_src lisp
-(use-package smartparens-config
-  :ensure smartparens
-  :config (progn (show-smartparens-global-mode t)))
-
-(add-hook 'prog-mode-hook 'turn-on-smartparens-strict-mode)
-(add-hook 'markdown-mode-hook 'turn-on-smartparens-strict-mode)
-
- #+end_src
-** Councel and Helpful
- + Providing more powerful completion options with counsel and a more informative help system with helpful.
-#+begin_src lisp
-(use-package counsel
-  :bind (("M-x" . counsel-M-x)
-         ("C-x b" . counsel-ibuffer)
-         ("C-x C-f" . counsel-find-file)
-         :map minibuffer-local-map
-         ("C-r" . 'counsel-minibuffer-history)))
-
-(use-package helpful
-  :custom
-  (counsel-describe-function-function #'helpful-callable)
-  (counsel-describe-variable-function #'helpful-variable)
-  :bind
-  ([remap describe-function] . counsel-describe-function)
-  ([remap describe-command] . helpful-command)
-  ([remap describe-variable] . counsel-describe-variable)
-  ([remap describe-key] . helpful-key))
-
-#+end_src
-** Text
- + Adjust the text sizes—Decrease and Increase.
-#+begin_src lisp
-(use-package hydra)
-
-(defhydra hydra-text-scale (:timeout 4)
-  "scale text"
-  ("j" text-scale-increase "in")
-  ("k" text-scale-decrease "out")
-  ("f" nil "finished" :exit t))
-
-(rune/leader-keys
-  "ts" '(hydra-text-scale/body :which-key "scale text"))
-#+end_src
-** Keybinds—Esc and load-theme using counsel.
- + Quit Prompt and load-theme.
- #+begin_src lisp
-;;; Make ESC quit prompts
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-
-(use-package general
- :config
-  (general-create-definer rune/leader-keys
-    :keymaps '(normal insert visual emacs)
-    :prefix "SPC"
-    :global-prefix "C-SPC")
-  
-  (rune/leader-keys
-   "t"  '(:ignore t :which-key "toggles")
-    "tt" '(counsel-load-theme :which-key "choose theme")))
-
- #+end_src
-** Projectile Configuration:
- + Easily access your directory or navigating projects in Emacs much more efficient.
-#+begin_src lisp
-
-(use-package projectile
-  :diminish projectile-mode
-  :config (projectile-mode)
-  :custom ((projectile-completion-system 'ivy))
-  :bind-keymap
-  ("C-c p" . projectile-command-map)
-  :init
-  ;; NOTE: Set this to the folder where you keep your Git repos!
-  (when (file-directory-p "~/src")
-    (setq projectile-project-search-path '("~/src")))
-  (setq projectile-switch-project-action #'projectile-dired))
-
-(use-package counsel-projectile
-  :config (counsel-projectile-mode))
-  
-#+end_src
-** Org mode configuration:
- + This snippet is my ORG mode setup and configuration
-#+begin_src lisp
-;;; Org Mode Configuration 
-(defun efs/org-font-setup ()
-  ;; Replace list hyphen with dot
-  (font-lock-add-keywords 'org-mode
-                          '(("^ *\\([-]\\) "
-                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
-
-  ;; Set faces for heading levels
-  (dolist (face '((org-level-1 . 1.2)
-                  (org-level-2 . 1.1)
-                  (org-level-3 . 1.05)
-                  (org-level-4 . 1.0)
-                  (org-level-5 . 1.1)
-                  (org-level-6 . 1.1)
-                  (org-level-7 . 1.1)
-                  (org-level-8 . 1.1)))
-    (set-face-attribute (car face) nil :font "Mate" :weight 'regular :height (cdr face)))
-
-  ;; Ensure that anything that should be fixed-pitch in Org files appears that way
-  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
-
-(use-package org
-  :hook (org-mode . efs/org-mode-setup)
-  :config
-  (setq org-ellipsis " ▾")
-  (efs/org-font-setup))
-
-(use-package org-bullets
-  :after org
-  :hook (org-mode . org-bullets-mode)
-  :custom
-  (org-bullets-bullet-list '("◉" "☯" "●" "☯" "●" "☯" "●")))
-
-(defun efs/org-mode-visual-fill ()
-  (setq visual-fill-column-width 100
-        visual-fill-column-center-text t)
-  (visual-fill-column-mode 1))
-
-(use-package visual-fill-column
-  :hook (org-mode . efs/org-mode-visual-fill))
-
-;;; Org Capture & Org Capture
-(global-set-key (kbd "C-c c") #'org-capture)
-(global-set-key (kbd "C-c a") #'org-agenda)
-;;; Org Tempalte
-(setq x nil)
-(setq org-capture-templates
-      '(("s" "Snippet" entry
-         (file+headline "n.org" "Captured Items")
-	 "* Note No. %^{}  \n")))
-
-;;; (add-hook 'org-mode-hook #'org-modern-mode
-(add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
+** Key Features
+*** Development Tools
++ **SLIME Integration**
+  + Configured for SLIME and SBCL implementation
+  + Enhanced with Rainbow Delimiters for parentheses
+  + Includes Smartparens for automatic parentheses pairing
     
-(setq
- ;; Edit settings
- org-auto-align-tags nil
- org-tags-column 0
- org-catch-invisible-edits 'show-and-error
- org-special-ctrl-a/e t
- org-insert-heading-respect-content t
++ **Code Enhancement**
+  + Rainbow parentheses and delimiters
+  + Includes Smartparens for automatic parentheses pairing
+  + Lambda symbol prettification
+  + Global prettify symbols mode
+  + Line numbering
+  + Page break line visualization
+  + History saving
+  + Date and time display
 
- ;; Org styling, hide markup etc.
- org-hide-emphasis-markers t
- org-pretty-entities t
+*** Interface Improvements
 
- ;; Agenda styling
- org-agenda-tags-column 0
- org-agenda-block-separator ?─
- org-agenda-time-grid
- '((daily today require-timed)
-   (800 1000 1200 1400 1600 1800 2000)
-   " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄")
- org-agenda-current-time-string
- "◀── NOW! ─────────────────────────────────────────────────")
++ **Navigation & Search**
+  + =Counsel= for enhanced completion
+  + =Projectile= for project management
+  + =Neotree= for directory tree visualization
+  + Custom three-window split command (=C-c 3=)
 
-;; Ellipsis styling
-(setq org-ellipsis "…")
-(add-hook 'org-mode-hook
-          (lambda ()
-            (set-face-attribute 'org-ellipsis nil :inherit 'default :box nil)))
-(global-org-modern-mode)
++ **Visual Enhancements**
+  + Doom theme (=gruvbox= variant) or (=manegarm= variant)
+  + Customized modeline with various indicators
+  + Dashboard with random banners and quotes
+  + =All-the-icon= integration
 
+*** Org Mode Features
 
-;;; Timestamps
-(defun format-date (format)
-  (let ((system-time-locale "en_US.UTF-8"))
-    (insert (format-time-string format))))
++ **Basic Configuration**
+  + Custom bullet points and formatting
+  + Visual fill column mode
+  + Modern styling and emphasis markers
 
-(defun insert-date ()
-  (interactive)
-  (format-date "%A, %B %d %Y"))
++ **Functionality**
+  + Org capture
+  + Org agenda
+  + Custom timestamp formatting
+  + Enhancements for headings
 
-(defun insert-date-and-time ()
-  (interactive)
-  (format-date "%Y-%m-%d %H:%M:%S"))
-  
-  
-;;; line numbers
-(setq linum-format "%5d │ ")
-(defun my-linum-mode-hook ()
-  (linum-mode t))
-(add-hook 'find-file-hook 'my-linum-mode-hook)
+*** Terminal
+
++ **VTERM Integration**
+  + Full terminal emulator functionality
+
+*** Keybindings
+
+  + `F8`: Toggle Neotree
+  + `C-c e`: Open init file
+  + `C-c c`: Org capture
+  + `C-c a`: Org agenda
+  + `ESC`: Quit prompts
+  + Various `Counsel` keybindings
+  + Emacs standard built-in commands
+
+*** Additional Features
+
++ **History and State Management**
+  + Minibuffer history saving
+  + Desktop state preservation
+  + Bookmark management
+
++ **Visual Customization**
+  + Text scaling with `hydra`
+  + Theme selection via `counsel`
+  + Line number formatting
+  + Custom modeline configuration
+  + Proper indentation.
+
+** File Structure
+#+begin_src
+│   ├── general.el        ; General settings
+│   ├── keys.el           ; Key bindings
+│   ├── libraries.el      ; Package management
+│   ├── misc.el           ; Miscellaneous settings
+│   └── org.el            ; Org-mode configuration
 #+end_src
-
-** Prettify symbol for lambda:
- + Add Support for Pretty Symbols Mode
-#+begin_src lisp
-  ;;; Global prettify
-  (global-prettify-symbols-mode 1)
-  (setq prettify-symbols-alist '(("lambda" . 955)))
-#+end_src
-** Dashboard
- + A dashboard after opening Emacs.
-#+begin_src lisp
-;;; Dashboard
-(defun generate-random-banner-title ()
-  "Generate Random Dashboard every open of Emacs."
-  (let* ((banners '("~/.emacs.d/img/as.gif"
-		    "~/.emacs.d/img/as1.gif"
-		    "~/.emacs.d/img/as2.gif"
-		    "~/.emacs.d/img/as3.gif"
-		    "~/.emacs.d/img/as4.gif"
-		    "~/.emacs.d/img/as5.gif"
-		    "~/.emacs.d/img/as6.gif"
-		    "~/.emacs.d/img/as7.gif"))
-	(titles '("Live as if you were to die tomorrow!"
-		      "To accomplish great things, we must not only act, but also dream; not only plan, but also believe."
-		      "Only passions, great passions can elevate the soul to great things."
-		      "I did a lot of great things in the past, but I live for today and for the future."
-		      "Believe you can and you’re halfway there."
-		      "Be happy for this moment. This moment is your life."
-		      "Change your thoughts and you change your world."
-		      "Life is only meaningful when we are striving for a goal."))
-	(random-banner (nth (random (length banners)) banners))
-	(random-titles (nth (random (length titles)) titles)))
-    (setq dashboard-startup-banner random-banner
-	  dashboard-banner-logo-title random-titles)))
-
-  (use-package dashboard
-  :ensure t
-  :config
-  (generate-random-banner-title)
-  (dashboard-setup-startup-hook)
-  (setq dashboard-items '((recents . 5)
-                          (projects . 5))))
-  
-#+end_src
-
-** Bonus
-** Custom commands:
-  * Three windows view
-#+begin_src lisp
-  (defun split-three-windows ()
-    "Split a window into thirds."
-    (interactive)
-    (split-window-right)
-    (split-window-right)
-    (balance-windows))
-  (bind-key "C-c 3" #'split-three-windows)
-  
- #+end_src
- * Open Emacs configuration file.
-#+begin_src lisp 
-  (defun open-init-file ()
-    "Open emacs config."
-    (interactive)
-    (find-file "~/.emacs"))
-
-  (bind-key "C-c e" #'open-init-file)
-#+end_src
-** Doom theme and modeline
-#+begin_src lisp
-  ;;; Doom theme (always attached)
-  (use-package doom-themes
-    :init (load-theme 'doom-gruvbox t))
-
-  ;;; Doom Mode line (Always attached)
-  (use-package doom-modeline
-    :ensure t
-    :init (doom-modeline-mode 1))
-
-  (setq doom-modeline-support-imenu t)
-  ;; How tall the mode-line should be. It's only respected in GUI.
-  ;; If the actual char height is larger, it respects the actual height.
-  (setq doom-modeline-height 25)
-  ;; How wide the mode-line bar should be. It's only respected in GUI.
-  (setq doom-modeline-bar-width 4)
-  ;; Whether to use hud instead of default bar. It's only respected in GUI.
-  (setq doom-modeline-hud nil)
-  ;; The limit of the window width.
-  ;; If `window-width' is smaller than the limit, some information won't be
-  ;; displayed. It can be an integer or a float number. `nil' means no limit."
-  (setq doom-modeline-window-width-limit 85)
-  (setq doom-modeline-project-detection 'auto)
-  (setq doom-modeline-buffer-file-name-style 'auto)
-  (setq doom-modeline-icon t)
-  (setq doom-modeline-major-mode-icon t)
-  (setq doom-modeline-major-mode-color-icon t)
-  (setq doom-modeline-buffer-state-icon t)
-  (setq doom-modeline-buffer-modification-icon t)
-  (setq doom-modeline-lsp-icon t)
-  (setq doom-modeline-time-icon t)
-  (setq doom-modeline-time-live-icon t)
-  (setq doom-modeline-time-analogue-clock t)
-  (setq doom-modeline-time-clock-size 0.7)
-  (setq doom-modeline-unicode-fallback nil)
-  (setq doom-modeline-buffer-name t)
-  (setq doom-modeline-highlight-modified-buffer-name t)
-  (setq doom-modeline-column-zero-based t)
-  (setq doom-modeline-percent-position '(-3 "%p"))
-  (setq doom-modeline-position-line-format '("L%l"))
-  (setq doom-modeline-position-column-format '("C%c"))
-  (setq doom-modeline-position-column-line-format '("%l:%c"))
-  (setq doom-modeline-minor-modes nil)
-  (setq doom-modeline-enable-word-count nil)
-  (setq doom-modeline-continuous-word-count-modes '(markdown-mode gfm-mode org-mode))
-  (setq doom-modeline-buffer-encoding t)
-  (setq doom-modeline-indent-info nil)
-  (setq doom-modeline-total-line-number nil)
-  (setq doom-modeline-vcs-icon t)
-  (setq doom-modeline-vcs-max-length 15)
-  (setq doom-modeline-vcs-display-function #'doom-modeline-vcs-name)
-  (setq doom-modeline-check-icon t)
-  (setq doom-modeline-check-simple-format nil)
-  (setq doom-modeline-number-limit 99)
-  (setq doom-modeline-workspace-name t)
-  (setq doom-modeline-persp-name t)
-  (setq doom-modeline-display-default-persp-name nil)
-  (setq doom-modeline-persp-icon t)
-  (setq doom-modeline-lsp t)
-  (setq doom-modeline-github nil)
-  (setq doom-modeline-github-interval (* 30 60))
-  (setq doom-modeline-modal t)
-  (setq doom-modeline-modal-icon t)
-  (setq doom-modeline-modal-modern-icon t)
-  (setq doom-modeline-irc t)
-  (setq doom-modeline-irc-stylize 'identity)
-  (setq doom-modeline-battery t)
-  (setq doom-modeline-time t)
-  (setq doom-modeline-buffer-file-name-function #'identity)
-  (setq doom-modeline-buffer-file-truename-function #'identity)
-  (setq doom-modeline-env-version t)
-  (setq doom-modeline-env-load-string "...")
-#+end_src
-** VTERM
- + Fully-fledged terminal emulator inside GNU Emacs based on libvterm.
-#+begin_src lisp
-  ;;; VTERM
-  (use-package vterm
-    :load-path  "/home/nycto/common-lisp/emacs-libvterm/")
-#+end_src
-
-** Icons
- + Use for rendering icons inside emacs. (Pre-requisites for Neotree and modeline)
-#+begin_src lisp
-;;; All-the-icons
-  (add-to-list 'load-path "/home/nycto/common-lisp/all-the-icons.el")
-   (when (display-graphic-p)
-     (require 'all-the-icons))
-
-  ;;; Nerd-icons
-  (require 'nerd-icons)
-#+end_src
-
-** Tree directory mapping
- + Use for easy navigation of files in all directories on machine inside Emacs. 
-#+begin_src lisp
-  ;;; NEOTREE
-  (add-to-list 'load-path "/home/nycto/common-lisp/neotree")
-  (require 'neotree)
-    (global-set-key [f8] 'neotree-toggle)
-    (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
-#+end_src
-** Lines
- + Use to insert horizontal line inside a lisp file
-#+begin_src lisp
-  ;;; Page-break-lines
-  (load "/home/nycto/common-lisp/page-break-lines/page-break-lines.el")
-  (require 'page-break-lines)
-#+end_src
-** Save
- + Saves the minibuffer history. Consolidation.
-#+begin_src lisp
-  (savehist-mode t)
-
-  (setq savehist-file "~/.emacs.d/savehist")
-
-  (defun save-defaults ()
-    (desktop-save desktop-dirname)
-    (savehist-save)
-    (bookmark-save))
-
-  (defun save-histories ()
-    (let ((buf (current-buffer)))
-      (save-excursion
-        (dolist (b (buffer-list))
-          (switch-to-buffer b)
-          (save-history)))
-      (switch-to-buffer buf)))
-
-  (defun save ()
-    (interactive)
-    (save-desktop)
-    (save-defaults)
-    (save-histories))
-#+end_Src
-** Date and time
- + Show the date and time on the modeline. 
-#+begin_Src lisp
-;; Add Date
-(setq display-time-day-and-date t
-      display-time-format "%a | %b, %d | %R"
-      display-time-interval 60
-      display-time-default-load-average nil)
-(display-time)
-#+end_src
-
-* Emacs Standard Commands and Slime commands—emacs-standard-commands.org
-** Standard Built-in Commands
-    + These commands are part of Emacs's core functionality. The file contains of my most use commands so far and comamnds I've set up on my init file. This file's purpose is whenever I tried to learn bindings that is more likely use on my journey will be added here.
